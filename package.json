@@ -1,0 +1,16 @@
+{
+  "name": "recordatorios-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aplicacion simple de recordatorios con guardado progresivo.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

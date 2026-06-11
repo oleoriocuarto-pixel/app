@@ -1,0 +1,13 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/reminders"
+  to = "/.netlify/functions/reminders"
+  status = 200
+
+[[redirects]]
+  from = "/api/reminders/:id"
+  to = "/.netlify/functions/reminders/:id"
+  status = 200
