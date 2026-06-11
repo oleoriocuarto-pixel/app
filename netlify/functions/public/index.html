@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Recordatorios</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Panel simple</p>
+          <h1>Recordatorios</h1>
+        </div>
+        <div class="top-actions">
+          <button class="primary compact" id="openCreate" type="button">Cargar</button>
+          <div class="status" id="saveStatus">Cargando...</div>
+        </div>
+      </header>
+
+      <section class="panel active" id="tab-view">
+        <div class="filters">
+          <label>
+            <span>Buscar</span>
+            <input id="search" type="search" placeholder="Nombre, monto, repuesto..." />
+          </label>
+          <label>
+            <span>Tipo</span>
+            <select id="typeFilter">
+              <option value="">Todos</option>
+            </select>
+          </label>
+          <label>
+            <span>Estado</span>
+            <select id="statusFilter">
+              <option value="pending">Pendientes</option>
+              <option value="all">Todos</option>
+              <option value="completed">Cumplidos</option>
+            </select>
+          </label>
+          <label>
+            <span>Desde</span>
+            <input id="fromDate" type="date" />
+          </label>
+          <label>
+            <span>Hasta</span>
+            <input id="toDate" type="date" />
+          </label>
+        </div>
+
+        <div class="summary" id="summary"></div>
+        <div class="list" id="reminderList"></div>
+      </section>
+    </main>
+
+    <button class="fab" id="floatingCreate" type="button" aria-label="Cargar recuerdo">+</button>
+
+    <dialog id="createDialog">
+      <form method="dialog" class="dialog-body" id="reminderForm">
+        <h2>Cargar recuerdo</h2>
+
+        <label>
+          <span>Quien carga</span>
+          <select id="createdBy" required>
+            <option value="">Elegir persona</option>
+            <option>TOBIAS</option>
+            <option>MATIAS</option>
+            <option>NICOLAS</option>
+            <option>SOFIA</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Recuerdo</span>
+          <textarea id="text" rows="4" placeholder="Ej: debo a Marcelo Callerio $100.000" required></textarea>
+        </label>
+
+        <div class="form-grid">
+          <label>
+            <span>Tipo</span>
+            <select id="type">
+              <option>Deudas que debo</option>
+              <option>Me deben</option>
+              <option>Pedidos</option>
+              <option>Compras</option>
+              <option>Trabajo</option>
+              <option>Personal</option>
+              <option>General</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Fecha</span>
+            <input id="dueDate" type="date" required />
+          </label>
+        </div>
+
+        <label>
+          <span>Detalle opcional</span>
+          <input id="notes" type="text" placeholder="Proveedor, telefono, monto, repuesto..." />
+        </label>
+
+        <div class="dialog-actions">
+          <button class="ghost" id="cancelCreate" type="button">Cancelar</button>
+          <button class="primary" type="submit">Guardar recuerdo</button>
+        </div>
+      </form>
+    </dialog>
+
+    <template id="reminderTemplate">
+      <article class="reminder">
+        <div class="reminder-main">
+          <button class="check" type="button" aria-label="Marcar cumplido"></button>
+          <div>
+            <p class="reminder-text"></p>
+            <div class="meta"></div>
+            <p class="reminder-notes"></p>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="ghost edit" type="button">Editar</button>
+          <button class="ghost delete" type="button">Borrar</button>
+        </div>
+      </article>
+    </template>
+
+    <dialog id="editDialog">
+      <form method="dialog" class="dialog-body" id="editForm">
+        <h2>Editar recuerdo</h2>
+        <input id="editId" type="hidden" />
+        <label>
+          <span>Quien carga</span>
+          <select id="editCreatedBy" required>
+            <option value="">Elegir persona</option>
+            <option>TOBIAS</option>
+            <option>MATIAS</option>
+            <option>NICOLAS</option>
+            <option>SOFIA</option>
+          </select>
+        </label>
+        <label>
+          <span>Recuerdo</span>
+          <textarea id="editText" rows="4" required></textarea>
+        </label>
+        <div class="form-grid">
+          <label>
+            <span>Tipo</span>
+            <input id="editType" type="text" required />
+          </label>
+          <label>
+            <span>Fecha</span>
+            <input id="editDueDate" type="date" />
+          </label>
+        </div>
+        <label>
+          <span>Detalle</span>
+          <input id="editNotes" type="text" />
+        </label>
+        <div class="dialog-actions">
+          <button class="ghost" value="cancel" type="button" id="cancelEdit">Cancelar</button>
+          <button class="primary" value="default" type="submit">Guardar cambios</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
