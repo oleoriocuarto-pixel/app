@@ -66,6 +66,9 @@ function openStore() {
 }
 
 function getReminderId(event) {
+  if (event.queryStringParameters && event.queryStringParameters.id) {
+    return event.queryStringParameters.id;
+  }
   const marker = "/.netlify/functions/reminders/";
   if (!event.path.includes(marker)) return "";
   return decodeURIComponent(event.path.slice(event.path.indexOf(marker) + marker.length));
@@ -114,4 +117,3 @@ export const handler = async (event) => {
     return send(400, { error: error.message || "No se pudo procesar la solicitud." });
   }
 };
-

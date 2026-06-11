@@ -125,6 +125,7 @@ function serveStatic(request, response) {
 async function handleApi(request, response) {
   const requestUrl = new URL(request.url, `http://${request.headers.host}`);
   const reminders = readReminders();
+  const queryId = requestUrl.searchParams.get("id") || "";
 
   if (request.method === "GET" && requestUrl.pathname === "/api/reminders") {
     sendJson(response, 200, reminders);
@@ -141,8 +142,9 @@ async function handleApi(request, response) {
   }
 
   const match = requestUrl.pathname.match(/^\/api\/reminders\/([^/]+)$/);
-  if (match && request.method === "PUT") {
-    const id = decodeURIComponent(match[1]);
+  const idFromRequest = queryId || (match ? decodeURIComponent(match[1]) : "");
+  if (idFromRequest && request.method === "PUT") {
+    const id = idFromRequest;
     const index = reminders.findIndex((item) => item.id === id);
     if (index === -1) {
       sendJson(response, 404, { error: "No se encontro el recuerdo." });
@@ -155,8 +157,8 @@ async function handleApi(request, response) {
     return;
   }
 
-  if (match && request.method === "DELETE") {
-    const id = decodeURIComponent(match[1]);
+  if (idFromRequest && request.method === "DELETE") {
+    const id = idFromRequest;
     const next = reminders.filter((item) => item.id !== id);
     if (next.length === reminders.length) {
       sendJson(response, 404, { error: "No se encontro el recuerdo." });

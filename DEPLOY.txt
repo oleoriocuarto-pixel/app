@@ -1,0 +1,55 @@
+Como subirla para usarla desde cualquier lugar
+
+Opcion Netlify
+1. Subir esta carpeta a un repositorio de GitHub.
+2. En Netlify, elegir Add new site > Import an existing project.
+3. Conectar el repositorio.
+4. Usar estos valores:
+   Build command: npm install
+   Publish directory: public
+   Functions directory: netlify/functions
+5. Deploy.
+
+En Netlify el guardado se hace con Netlify Functions + Netlify Blobs.
+No hace falta DATA_DIR en Netlify.
+
+Si aparece el error:
+"The environment has not been configured to use Netlify Blobs..."
+
+Agregar estas variables en Netlify:
+1. NETLIFY_SITE_ID
+   Valor: Project ID del sitio.
+   Se encuentra en Project configuration > General > Project information.
+
+2. NETLIFY_AUTH_TOKEN
+   Valor: Personal access token de Netlify.
+   Se crea en User settings > Applications > Personal access tokens.
+
+Despues de agregarlas, hacer Deploys > Trigger deploy > Clear cache and deploy site.
+
+Otras opciones con servidor Node
+- Comando de inicio: npm start
+- Puerto: lo asigna el hosting con la variable PORT
+- Carpeta de datos: usar la variable DATA_DIR
+
+Opcion recomendada: Railway con Volume
+1. Subir esta carpeta a un repositorio de GitHub.
+2. En Railway, crear un proyecto desde ese repositorio.
+3. Agregar un Volume al servicio.
+4. Montar el Volume en /data.
+5. Crear la variable:
+   DATA_DIR=/data
+6. El comando de inicio debe ser:
+   npm start
+
+Opcion Render:
+1. Subir esta carpeta a un repositorio de GitHub.
+2. Crear un Web Service desde Render.
+3. Build command: npm install
+4. Start command: npm start
+5. Agregar un Persistent Disk montado en /var/data.
+6. Crear la variable:
+   DATA_DIR=/var/data
+
+Importante:
+Si se sube sin Volume/Persistent Disk, la app puede funcionar, pero los recuerdos cargados se pueden perder cuando el servicio se reinicie o redeploye.

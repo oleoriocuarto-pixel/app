@@ -1,0 +1,24 @@
+[
+  {
+    "id": "mq9n03if-fs7gu98y",
+    "text": "me debe marcelo callerio envase cremallera",
+    "type": "Me deben",
+    "dueDate": "2026-06-11",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-06-11T15:13:02.151Z",
+    "updatedAt": "2026-06-11T15:13:09.670Z",
+    "completedAt": ""
+  },
+  {
+    "id": "mq9hzuwp-ac4t0i5e",
+    "text": "jgfjgfj",
+    "type": "Deudas que debo",
+    "dueDate": "2026-06-11",
+    "notes": "",
+    "completed": true,
+    "createdAt": "2026-06-11T12:52:52.921Z",
+    "updatedAt": "2026-06-11T13:22:14.785Z",
+    "completedAt": "2026-06-11T13:22:14.785Z"
+  }
+]

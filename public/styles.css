@@ -180,16 +180,130 @@ textarea:focus {
   padding: 7px 10px;
 }
 
-.list {
+.dashboard {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 14px;
+  align-items: start;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+  gap: 12px;
+}
+
+.type-column,
+.overdue-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 253, 248, 0.72);
+  min-width: 0;
+}
+
+.type-column {
+  border-top: 5px solid var(--accent);
+}
+
+.type-column[data-type="Deudas que debo"] {
+  border-top-color: #b45309;
+}
+
+.type-column[data-type="Me deben"] {
+  border-top-color: #2563eb;
+}
+
+.type-column[data-type="Pedidos"] {
+  border-top-color: #0f766e;
+}
+
+.type-column[data-type="Compras"] {
+  border-top-color: #7c3aed;
+}
+
+.type-column[data-type="Trabajo"] {
+  border-top-color: #be123c;
+}
+
+.type-column[data-type="Personal"] {
+  border-top-color: #15803d;
+}
+
+.type-column[data-type="General"] {
+  border-top-color: #475569;
+}
+
+.column-head,
+.overdue-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 10px;
+  padding: 12px 12px 8px;
+}
+
+.column-head h2,
+.overdue-head h2 {
+  font-size: 1rem;
+}
+
+.column-head span,
+.overdue-head span {
+  min-width: 28px;
+  border-radius: 999px;
+  background: #e5e1d7;
+  color: var(--muted);
+  padding: 4px 8px;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.column-list,
+.overdue-list {
+  display: grid;
+  gap: 9px;
+  padding: 0 10px 10px;
 }
 
 .reminder {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
   gap: 14px;
-  padding: 14px;
+  padding: 12px;
+  border-left: 5px solid var(--accent);
+}
+
+.reminder[data-type="Deudas que debo"] {
+  border-left-color: #b45309;
+}
+
+.reminder[data-type="Me deben"] {
+  border-left-color: #2563eb;
+}
+
+.reminder[data-type="Pedidos"] {
+  border-left-color: #0f766e;
+}
+
+.reminder[data-type="Compras"] {
+  border-left-color: #7c3aed;
+}
+
+.reminder[data-type="Trabajo"] {
+  border-left-color: #be123c;
+}
+
+.reminder[data-type="Personal"] {
+  border-left-color: #15803d;
+}
+
+.reminder[data-type="General"] {
+  border-left-color: #475569;
+}
+
+.reminder.overdue {
+  background: #fff7ed;
+  border-color: #c2410c;
 }
 
 .reminder.completed {
@@ -251,6 +365,10 @@ textarea:focus {
   gap: 8px;
 }
 
+.actions {
+  justify-content: flex-end;
+}
+
 .dialog-actions {
   justify-content: flex-end;
 }
@@ -272,6 +390,17 @@ textarea:focus {
   padding: 26px;
   color: var(--muted);
   text-align: center;
+}
+
+.empty.small {
+  padding: 16px;
+  font-size: 0.92rem;
+}
+
+.overdue-panel {
+  position: sticky;
+  top: 12px;
+  border-top: 5px solid #c2410c;
 }
 
 .fab {
@@ -323,8 +452,13 @@ dialog::backdrop {
   }
 
   .filters,
-  .form-grid {
+  .form-grid,
+  .dashboard {
     grid-template-columns: 1fr;
+  }
+
+  .overdue-panel {
+    position: static;
   }
 
   .actions {

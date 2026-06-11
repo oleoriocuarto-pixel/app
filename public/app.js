@@ -21,7 +21,10 @@ const els = {
   toDate: document.querySelector("#toDate"),
   summary: document.querySelector("#summary"),
   list: document.querySelector("#reminderList"),
+  overdueList: document.querySelector("#overdueList"),
+  overdueCount: document.querySelector("#overdueCount"),
   template: document.querySelector("#reminderTemplate"),
+  columnTemplate: document.querySelector("#columnTemplate"),
   editDialog: document.querySelector("#editDialog"),
   editForm: document.querySelector("#editForm"),
   editId: document.querySelector("#editId"),
@@ -94,6 +97,25 @@ function formatDate(value) {
   return `${day}/${month}/${year}`;
 }
 
+function addDays(date, days) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function expirationDate(item) {
+  const base = item.createdAt ? new Date(item.createdAt) : new Date();
+  return addDays(base, 7);
+}
+
+function formatDateTime(date) {
+  return formatDate(date.toLocaleDateString("en-CA"));
+}
+
+function isOverdue(item) {
+  return !item.completed && expirationDate(item) < new Date();
+}
+
 function uniqueTypes() {
   return [...new Set(state.reminders.map((item) => item.type).filter(Boolean))].sort((a, b) => a.localeCompare(b));
 }
@@ -132,11 +154,13 @@ function filteredReminders() {
 function renderSummary(items) {
   const pending = state.reminders.filter((item) => !item.completed).length;
   const completed = state.reminders.length - pending;
+  const overdue = state.reminders.filter(isOverdue).length;
   els.summary.innerHTML = "";
   [
     `${items.length} en vista`,
     `${pending} pendientes`,
     `${completed} cumplidos`,
+    `${overdue} vencidos`,
   ].forEach((text) => {
     const pill = document.createElement("span");
     pill.className = "pill";
@@ -155,19 +179,55 @@ function renderList(items) {
     return;
   }
 
-  items.forEach((item) => {
-    const node = els.template.content.firstElementChild.cloneNode(true);
-    node.classList.toggle("completed", item.completed);
-    node.querySelector(".reminder-text").textContent = item.text;
-    node.querySelector(".meta").textContent = `${item.type} - ${formatDate(item.dueDate)} - Cargo: ${item.createdBy || "Sin responsable"}`;
-    const notes = node.querySelector(".reminder-notes");
-    notes.textContent = item.notes || "";
-    notes.hidden = !item.notes;
-    node.querySelector(".check").addEventListener("click", () => toggleCompleted(item));
-    node.querySelector(".edit").addEventListener("click", () => openEdit(item));
-    node.querySelector(".delete").addEventListener("click", () => deleteReminder(item));
-    els.list.append(node);
+  groupedByType(items).forEach(([type, group]) => {
+    const column = els.columnTemplate.content.firstElementChild.cloneNode(true);
+    column.dataset.type = type;
+    column.querySelector("h2").textContent = type;
+    column.querySelector("span").textContent = group.length;
+    const columnList = column.querySelector(".column-list");
+    group.forEach((item) => columnList.append(createReminderNode(item)));
+    els.list.append(column);
   });
+}
+
+function groupedByType(items) {
+  const groups = new Map();
+  items.forEach((item) => {
+    const type = item.type || "General";
+    if (!groups.has(type)) groups.set(type, []);
+    groups.get(type).push(item);
+  });
+  return [...groups.entries()].sort(([a], [b]) => a.localeCompare(b));
+}
+
+function createReminderNode(item) {
+  const node = els.template.content.firstElementChild.cloneNode(true);
+  node.classList.toggle("completed", item.completed);
+  node.classList.toggle("overdue", isOverdue(item));
+  node.dataset.type = item.type || "General";
+  node.querySelector(".reminder-text").textContent = item.text;
+  node.querySelector(".meta").textContent = `${item.type} - ${formatDate(item.dueDate)} - Cargo: ${item.createdBy || "Sin responsable"} - Vence: ${formatDateTime(expirationDate(item))}`;
+  const notes = node.querySelector(".reminder-notes");
+  notes.textContent = item.notes || "";
+  notes.hidden = !item.notes;
+  node.querySelector(".check").addEventListener("click", () => toggleCompleted(item));
+  node.querySelector(".edit").addEventListener("click", () => openEdit(item));
+  node.querySelector(".delete").addEventListener("click", () => deleteReminder(item));
+  return node;
+}
+
+function renderOverdue() {
+  const items = state.reminders.filter(isOverdue).sort((a, b) => expirationDate(a) - expirationDate(b));
+  els.overdueList.innerHTML = "";
+  els.overdueCount.textContent = items.length;
+  if (!items.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty small";
+    empty.textContent = "Sin vencidas.";
+    els.overdueList.append(empty);
+    return;
+  }
+  items.forEach((item) => els.overdueList.append(createReminderNode(item)));
 }
 
 function render() {
@@ -175,6 +235,7 @@ function render() {
   const items = filteredReminders();
   renderSummary(items);
   renderList(items);
+  renderOverdue();
 }
 
 async function createReminder(event) {
@@ -200,7 +261,7 @@ async function createReminder(event) {
 
 async function updateReminder(item, patch) {
   setStatus("Guardando...");
-  const updated = await api(`/api/reminders/${encodeURIComponent(item.id)}`, {
+  const updated = await api(`/api/reminders?id=${encodeURIComponent(item.id)}`, {
     method: "PUT",
     body: JSON.stringify({ ...item, ...patch }),
   });
@@ -217,7 +278,7 @@ async function deleteReminder(item) {
   const ok = confirm(`Borrar este recuerdo?\n\n${item.text}`);
   if (!ok) return;
   setStatus("Guardando...");
-  await api(`/api/reminders/${encodeURIComponent(item.id)}`, { method: "DELETE" });
+  await api(`/api/reminders?id=${encodeURIComponent(item.id)}`, { method: "DELETE" });
   state.reminders = state.reminders.filter((current) => current.id !== item.id);
   setStatus("Guardado");
   render();

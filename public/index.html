@@ -50,7 +50,16 @@
         </div>
 
         <div class="summary" id="summary"></div>
-        <div class="list" id="reminderList"></div>
+        <div class="dashboard">
+          <div class="board" id="reminderList"></div>
+          <aside class="overdue-panel">
+            <div class="overdue-head">
+              <h2>Vencidas</h2>
+              <span id="overdueCount">0</span>
+            </div>
+            <div class="overdue-list" id="overdueList"></div>
+          </aside>
+        </div>
       </section>
     </main>
 
@@ -123,6 +132,16 @@
           <button class="ghost delete" type="button">Borrar</button>
         </div>
       </article>
+    </template>
+
+    <template id="columnTemplate">
+      <section class="type-column">
+        <div class="column-head">
+          <h2></h2>
+          <span></span>
+        </div>
+        <div class="column-list"></div>
+      </section>
     </template>
 
     <dialog id="editDialog">
