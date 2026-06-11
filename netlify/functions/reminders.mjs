@@ -56,6 +56,15 @@ async function writeReminders(store, reminders) {
   await store.setJSON("reminders", reminders);
 }
 
+function openStore() {
+  const siteID = process.env.NETLIFY_SITE_ID || process.env.SITE_ID || "";
+  const token = process.env.NETLIFY_AUTH_TOKEN || process.env.NETLIFY_BLOBS_TOKEN || "";
+  if (siteID && token) {
+    return getStore({ name: "recordatorios", siteID, token });
+  }
+  return getStore("recordatorios");
+}
+
 function getReminderId(event) {
   const marker = "/.netlify/functions/reminders/";
   if (!event.path.includes(marker)) return "";
@@ -64,7 +73,7 @@ function getReminderId(event) {
 
 export const handler = async (event) => {
   try {
-    const store = getStore("recordatorios");
+    const store = openStore();
     const reminders = await readReminders(store);
     const id = getReminderId(event);
 
@@ -105,3 +114,4 @@ export const handler = async (event) => {
     return send(400, { error: error.message || "No se pudo procesar la solicitud." });
   }
 };
+
